@@ -1,66 +1,363 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Сайт с кнопкой</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strike Zone - Официальный сайт</title>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, set, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhJCcCMPzoizkq8TxAR1GOkZj8Bi1xHW4",
+            authDomain: "strikezone-b1d6c.firebaseapp.com",
+            databaseURL: "https://strikezone-b1d6c-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "strikezone-b1d6c",
+            storageBucket: "strikezone-b1d6c.firebasestorage.app",
+            messagingSenderId: "927058129758",
+            appId: "1:927058129758:web:6b4ef16139a4973061d5cf",
+            measurementId: "G-XP1BHKSHX6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const visitsRef = ref(database, 'visits');
+
+        // Получаем текущее количество посещений
+        get(visitsRef).then((snapshot) => {
+            let currentVisits = snapshot.val() || 0;
+            currentVisits++;
+            set(visitsRef, currentVisits);
+            document.getElementById('visit-counter').textContent = currentVisits;
+        });
+
+        // Обновляем счетчик в реальном времени
+        onValue(visitsRef, (snapshot) => {
+            const visits = snapshot.val() || 0;
+            document.getElementById('visit-counter').textContent = visits;
+        });
+    </script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial;
-            margin: 40px;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
         }
-        
+
+        /* Счетчик посещений */
+        .visit-counter {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            font-size: 0.85em;
+            color: #888;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Снежинки */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            z-index: 1;
+            color: #ffffff;
+            font-size: 1em;
+            animation: fall linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Контейнер */
         .container {
+            max-width: 1200px;
             margin: 0 auto;
-            max-width: 500px;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
         }
-        
-        p {
-            color: black;
-            margin: 20px 0;
-            line-height: 1.5;
+
+        /* Шапка */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
         }
-        
-        .button {
-            display: inline-block;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            padding: 15px 30px;
-            border-radius: 5px;
-            margin: 20px 0;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-        }
-        
-        .button:hover {
-            background: #444;
-        }
-        
-        .user-info {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ccc;
-        }
-        
-        .username, .nickname {
+
+        .logo {
+            font-size: 4em;
             font-weight: bold;
+            background: linear-gradient(45deg, #ffffff, #c0c0c0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            }
+        }
+
+        .tagline {
+            font-size: 1.3em;
+            color: #cccccc;
+            margin-bottom: 10px;
+        }
+
+        .year {
+            font-size: 1.1em;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* Главная секция */
+        .main-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin: 40px 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-title {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #ffffff;
+        }
+
+        .description {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #cccccc;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Кнопки */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .btn {
+            padding: 18px 45px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .developer-info {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        .telegram-link {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .telegram-link:hover {
+            color: #0088cc;
+        }
+
+        .email {
+            color: #888;
+            font-size: 0.95em;
+            margin-top: 10px;
+        }
+
+        /* Декоративные элементы */
+        .decoration {
+            position: fixed;
+            font-size: 3em;
+            opacity: 0.1;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .decoration:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+        .decoration:nth-child(2) { top: 60%; right: 10%; animation-delay: 2s; }
+        .decoration:nth-child(3) { bottom: 15%; left: 15%; animation-delay: 4s; }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5em;
+            }
+            
+            .game-title {
+                font-size: 2em;
+            }
+            
+            .main-section {
+                padding: 40px 20px;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <p>Купить тестера в игре "Strike Zone", OБЬЯЗАТЕЛЬНО ПРОЧИТАЙТЕ НИЖЕ!</p>
-        
-        <!-- Замените ссылку здесь ОБЬЯЗАТЕЛЬНО ПРОЧИТАЙТЕ НИЖЕ! -->
-        <a href="https://new.donatepay.ru/@1444431" target="_blank" class="button">
-            Купить
-        </a>
-        
-        <div class="user-info">
-            <p>В описание добавьте:</p>
-            <p>Ваш <span class="username">@username</span> (телеграмм)</p>
-            <p>Ваш никнейм <span class="nickname">&lt;Nickname&gt;</span></p>
-        </div>
+    <!-- Счетчик посещений -->
+    <div class="visit-counter">
+        Посещений: <span id="visit-counter">0</span>
     </div>
+
+    <!-- Декоративные снежинки -->
+    <div class="decoration">❄</div>
+    <div class="decoration">⛄</div>
+    <div class="decoration">🎄</div>
+
+    <div class="container">
+        <header>
+            <h1 class="logo">STRIKE ZONE</h1>
+            <p class="tagline">Тактический шутер</p>
+            <p class="year">🎄 С Новым 2025 годом! ❄️</p>
+        </header>
+
+        <main class="main-section">
+            <h2 class="game-title">Добро пожаловать в Strike Zone</h2>
+            <p class="description">
+                Погрузитесь в мир тактического шутера с реалистичной механикой боя! Strike Zone — это динамичный командный шутер, 
+                вдохновленный классикой жанра. Присоединяйтесь к нашему сообществу и следите за обновлениями!
+            </p>
+
+            <div class="btn-container">
+                <a href="https://new.donatepay.ru/@1444431" target="_blank" class="btn btn-primary">
+                    Telegram канал
+                </a>
+                <a href="mailto:majinkrafter5@gmail.com" class="btn btn-secondary">
+                    Связаться
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="developer-info">
+                    <p>Разработчик: <a href="https://t.me/pukperdeska" target="_blank" class="telegram-link">@pukperdeska</a></p>
+                    <p class="email">Поддержка: majinkrafter5@gmail.com</p>
+                </div>
+                <p>© 2025 Strike Zone. Все права защищены.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Создание снежинок
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = Math.random() * 3 + 5 + 's';
+            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowflake.style.fontSize = Math.random() * 1 + 0.5 + 'em';
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 8000);
+        }
+
+        // Создание снежинок каждые 300мс
+        setInterval(createSnowflake, 300);
+    </script>
 </body>
 </html>
